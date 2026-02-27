@@ -1,10 +1,23 @@
 import { useState } from "react";
 import Note from "./components/Note";
+import { useEffect } from "react";
+import axios from 'axios';
 
-const App = (props) => {
-  const [notes, setNotes] = useState(props.notes);
+const App = () => {
+  const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('a new note...');
   const [showAll, setShowAll] = useState(true);
+
+  useEffect(() => {
+    console.log('effect');
+    axios
+      .get('http://localhost:3001/notes')
+      .then(response => {
+        console.log('promise fulfilled');
+        setNotes(response.data);
+      })
+  }, [])
+  console.log('render', notes.length, 'notes');
 
   const notesToShow = showAll
     ? notes
@@ -31,9 +44,9 @@ const App = (props) => {
     <div>
       <h1>Notes</h1>
       <div>
-        <buton onClick={() => setShowAll(!showAll)}>
+        <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all'}
-        </buton>
+        </button>
       </div>
       <ul>
         {notesToShow.map(note => 
