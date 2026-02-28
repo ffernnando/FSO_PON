@@ -1,3 +1,4 @@
+import personServices from "../services/persons";
 
 const AddForm = ({ persons, setPersons, newName, setNewName, newNumber, setNewNumber}) => {
   const addName = (event) => {
@@ -7,9 +8,22 @@ const AddForm = ({ persons, setPersons, newName, setNewName, newNumber, setNewNu
       return;
     }
     const newPerson = { name: newName, number: newNumber };
-    persons.find(person => person.name === newPerson.name)
-      ? window.alert(`${newPerson.name} is already added to the phonebook!`)
-      : setPersons(persons.concat(newPerson));
+    const foundPerson = persons.find(person => person.name === newPerson.name);
+    if (foundPerson) {
+      if (window.confirm(`${newPerson.name} is already added to the phonebook, replace the old number with a new one?`)) {
+        personServices
+          .update(foundPerson.id, newPerson)
+          .then(updatedPerson => {
+            setPersons(persons.map(p => p.id !== updatedPerson.id ? p : updatedPerson));
+          })
+          .catch(() => alert(`The person you are trying to update is already deleted from the server!`));
+      }
+    } else {
+      personServices
+        .create(newPerson)
+        .then(addedPerson => setPersons(persons.concat(addedPerson)))
+        .catch(error => console.log(error));
+    }
     setNewName('');
     setNewNumber('');
   }
