@@ -2,7 +2,7 @@ import personServices from "../services/persons";
 import { changeNotification } from './Notification';
 
 
-const AddForm = ({ persons, setPersons, newName, setNewName, newNumber, setNewNumber, notification, setNotification}) => {
+const AddForm = ({ persons, setPersons, newName, setNewName, newNumber, setNewNumber, setNotification}) => {
 
   const addName = (event) => {
     event.preventDefault();
